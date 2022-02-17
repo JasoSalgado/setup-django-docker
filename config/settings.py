@@ -1,5 +1,6 @@
 from pathlib import Path
 from environ import Env
+import os
 
 env = Env()
 env.read_env(env_file='config/.env')
@@ -29,10 +30,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Postgres search lookups
+    'django.contrib.postgres',
+    # Site maps
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    # Third party apps
+    'taggit',
+    'ckeditor',
+    # My apps
+    'blog.apps.BlogConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,8 +79,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3'
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB'),
+        'HOST': env('HOST'),
+        'USER': env('USER'),
+        'PASSWORD': env('PASSWORD')
     }
 }
 
@@ -96,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ES'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 
@@ -108,9 +123,33 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# To send emails locally
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# To send emails with Google
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = config('EMAIL_PORT')
+# EMAIL_USE_TLS = True
+
+# import django_heroku
+# django_heroku.settings(locals())
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+    }
+}
+CKEDITOR_UPLOAD_PATH = 'uploads/'

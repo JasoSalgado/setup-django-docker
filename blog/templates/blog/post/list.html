@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+
+{% block title %}Jaso Salgado{% endblock %}
+
+<p class="tags">
+    Tags: 
+    {% for tag in posts.tags.all %}
+        <a href="{% url "blog:post_list_by_tag" tag.slug %}">
+            {{ tag.name }}
+        </a>
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p> 
+
+{% block content %}
+    <h1>Perito Traductor & Desarrollador Backend</h1>
+    {% if tag %}
+        <h2>Publicaciones etiquetadas con "{{ tag.name }}"</h2>
+    {% endif %}
+
+    {% for post in posts %}
+        <h2>
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title }}
+            </a>
+        </h2>
+
+        <p class="tags">
+            Tags: 
+            {% for tag in post.tags.all %}
+                <a href="{% url "blog:post_list_by_tag" tag.slug %}">
+                    {{ tag.name }}
+                </a>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p> 
+
+        <p class="date">
+            Publicado {{ post.publish }} por {{ post.author }}
+        </p>
+        {{ post.body|markdown|truncatewords_html:30 }}
+    {% endfor %}
+
+    {% include "pagination.html" with page=posts %}
+{% endblock %}

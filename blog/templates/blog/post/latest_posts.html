@@ -1,0 +1,7 @@
+<ul>
+    <!-- Display the last 5 posts by user -->
+    {% for post in latest_post %}
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+    {% endfor %}
+        
+</ul>
